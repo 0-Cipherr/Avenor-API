@@ -5,6 +5,14 @@ import type {
   QuoteParams,
 } from "../types/BridgeTypes.js";
 
+interface BridgeQueryRules {
+  postBridge(): any;
+  getBridge(): any;
+  getAllBridges(): any;
+  dbConnect(): Promise<boolean>;
+  dbDisconnect(): Promise<boolean>;
+}
+
 interface Bridge {
   bridgeName: string;
   chainsAvailable: Array<number>; //array of 4 digit numbers chain id
@@ -13,4 +21,4 @@ interface Bridge {
   getAllAssets(): AllAssets;
 }
 
-export type { Bridge };
+export type { Bridge, BridgeQueryRules };
