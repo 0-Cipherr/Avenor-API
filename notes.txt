@@ -1,3 +1,12 @@
+09-14-last commit : left off working on BridgeQueries class that handles pshing and pulling  different bridges for the api 
+
+finish this andits interface 
+
+we still gotta work on ox.ts because we need to push at least one bridge to test the system focus on pg first tho setup db ad queries then move on the ox 
+
+
+
+
 Here is the complete cross-chain example entirely in multi-line comment format:
 for 0x api
 ```typescript

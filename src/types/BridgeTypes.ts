@@ -5,8 +5,9 @@ type QuoteParams = {
   buyToken: string;
   sellAmount: string;
   originAddress: string;
-  reciever: string;
   sortQuotesBy: string;
+  maxNumQuotes: "1";
+  reciever: string;
 };
 
 type BridgeQuote = {

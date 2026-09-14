@@ -9,7 +9,7 @@ import type {
   QuoteParams,
 } from "../../../types/BridgeTypes.ts";
 
-class Ox implements Bridge {
+export default class Ox implements Bridge {
   chainsAvailable: Array<number> = []; //chain ids go here
   bridgeName: string = "Ox";
   baseUrl: ApiURL = "https://api.0x.org/cross-chain/";
@@ -29,20 +29,22 @@ class Ox implements Bridge {
     };
   }
 
+  getUrlSearchParams(params: QuoteParams): URLSearchParams {
+    return new URLSearchParams({
+      ...params,
+    });
+  }
+
   //params must be in the structure in quote params for all bridges
   async quote(params: QuoteParams): Promise<BridgeQuote> {
+    const urlSearchParams: URLSearchParams = this.getUrlSearchParams(params);
     const reqParams: BridgeRequest = {
-      urlParameters: this.baseUrl,
+      urlParameters: "/quotes?" + urlSearchParams.toString(),
       parameters: this.baseUrl,
       method: "GET",
-      data: params, //supposed to be an obj
+      data: {}, //supposed to be an objempty cuz we convert params t string
     };
 
-    const response = await fetch(
-      this.baseUrl + "/quotes?" + reqParams.toString(),
-    );
-
-    const { data } = await req.data;
     // AxiosResponse bridgeResponse =await  callBridge(bridgeRequest);
     return {} as Promise<BridgeQuote>;
   }
