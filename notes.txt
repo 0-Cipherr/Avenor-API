@@ -1,0 +1,251 @@
+Here is the complete cross-chain example entirely in multi-line comment format:
+for 0x api
+```typescript
+/*
+ * ============================================================
+ * 0x CROSS-CHAIN API - COMPLETE EXAMPLE
+ * ============================================================
+ *
+ * SUPPORTED CHAINS & CHAIN IDs:
+ * ─────────────────────────────
+ * EVM Chains:
+ *   - Ethereum Mainnet   : 1
+ *   - Abstract           : 2741
+ *   - Arbitrum One       : 42161
+ *   - Avalanche C-Chain  : 43114
+ *   - Base               : 8453
+ *   - Berachain          : 80094
+ *   - BNB Smart Chain    : 56
+ *   - HyperEVM           : 999
+ *   - Ink                : 57073
+ *   - Linea              : 59144
+ *   - Mantle             : 5000
+ *   - Monad              : 143
+ *   - OP Mainnet         : 10
+ *   - Plasma             : 9745
+ *   - Polygon            : 137
+ *   - Robinhood Chain    : 4663
+ *   - Scroll             : 534352
+ *   - Sonic              : 146
+ *   - Tempo              : 4217
+ *   - Unichain           : 130
+ *   - World Chain        : 480
+ *
+ * Non-EVM Chains (use name string OR numeric ID):
+ *   - Solana             : "solana"    OR 999999999991
+ *   - HyperCore          : "hypercore" OR 999999999992  (alias: "hyperliquid")
+ *   - Tron               : "tron"      OR 999999999993
+ *
+ * ============================================================
+ * AUTHENTICATION
+ * ============================================================
+ *
+ * All requests require an API key in the request header:
+ *   Header: "0x-api-key": "YOUR_API_KEY"
+ *
+ * Get your API key at: https://dashboard.0x.org
+ *
+ * Base URL for all requests:
+ *   https://api.0x.org
+ *
+ * ============================================================
+ * STEP 1: FETCH A QUOTE
+ * ============================================================
+ *
+ * Endpoint : GET https://api.0x.org/cross-chain/quotes
+ *
+ * Required Parameters:
+ *   - originChain        : Chain ID where you are selling tokens
+ *   - destinationChain   : Chain ID where you want to receive tokens
+ *   - sellToken          : Contract address of the token you are selling
+ *   - buyToken           : Contract address of the token you want to receive
+ *   - sellAmount         : Amount to sell in base units (e.g. wei for EVM)
+ *   - originAddress      : The taker's wallet address on the origin chain
+ *
+ * Optional Parameters:
+ *   - sortQuotesBy       : Sort returned quotes by "price" or "speed"
+ *   - maxNumQuotes       : Maximum number of quotes to return
+ *   - includedBridges    : Comma-separated bridge provider IDs to include
+ *   - excludedBridges    : Comma-separated bridge provider IDs to exclude
+ *
+ * Available Bridge Provider IDs:
+ *   - across_v4
+ *   - relay
+ *   - ccip
+ *   - squid
+ *   - near_intents
+ *   - oft
+ *   - mayan_swift
+ *   - mayan_mctp
+ *   - mayan_fast_mctp
+ *   - circle_forwarder_standard
+ *   - circle_forwarder_fast
+ *   - arbitrum_bridge
+ *   - linea
+ *   - superchain
+ *   - hyper_core_bridge
+ *   - paxg
+ *
+ * Response includes:
+ *   - quotes[]                   : Array of available bridge quotes
+    *   - quotes[0].quoteId          : Unique ID for this quote (use in /status)Based on the documented API response examples:
+
+/*
+ *   - quotes[]                   : Quote[]             - Array of available bridge quotes
+ *   - quotes[0].quoteId          : string              - Unique ID for this quote (use in /status)
+ *   - quotes[0].transaction      : Transaction         - Ready-to-sign transaction details
+ *   - quotes[0].issues.allowance : AllowanceIssue|null - Non-null if token approval is required
+ *   - quotes[0].buyAmount        : string              - Expected amount received on destination chain
+
+ 
+ */
+    *   - quotes[0].transaction      : Ready-to-sign transaction details
+    *   - quotes[0].issues.allowance : Non-null if token approval is required
+    *   - quotes[0].buyAmount        : Expected amount received on destination chain
+    *
+    * Example:
+ *
+ *   const quotesParams = new URLSearchParams({
+ *       originChain: '8453',        // Base
+ *       destinationChain: '42161',  // Arbitrum
+ *       sellToken: '0x4200000000000000000000000000000000000006', // WETH on Base
+ *       buyToken: '0xaf88d065e77c8cc2239327c5edb3a432268e5831',  // USDC on Arbitrum
+ *       sellAmount: '1000000000000000000', // 1 WETH in wei
+ *       originAddress: '0xYOUR_WALLET_ADDRESS',
+ *       sortQuotesBy: 'price',
+ *       maxNumQuotes: '1'
+ *   });
+ *
+ *   const headers = { '0x-api-key': 'YOUR_API_KEY' };
+ *
+ *   const quoteResponse = await fetch(
+ *       'https://api.0x.org/cross-chain/quotes?' + quotesParams.toString(),
+ *       { headers }
+ *   );
+ *
+ *   const quote = await quoteResponse.json();
+ *
+ * ============================================================
+ * STEP 2: SET TOKEN ALLOWANCE (EVM CHAINS ONLY)
+ * ============================================================
+ *
+ * Check if an allowance is required before submitting the transaction.
+ * This is indicated by a non-null `issues.allowance` field in the quote response.
+ *
+ * Rules:
+ *   - NEVER set an allowance on the Settler contract
+ *   - ONLY set allowances on AllowanceHolder or Permit2 contracts
+ *   - The correct spender address is in: quotes[0].issues.allowance.spender
+ *   - Solana and Tron do NOT require this step
+ *   - HyperCore does NOT require this step
+ *
+ * Example:
+ *
+ *   if (quote.quotes[0].issues.allowance !== null) {
+ *       const approveTxHash = await walletClient.writeContract({
+ *           address: quote.sellToken,
+ *           abi: erc20Abi,
+ *           functionName: 'approve',
+ *           args: [
+ *               quote.quotes[0].issues.allowance.spender,
+ *               BigInt(quote.sellAmount),
+ *           ],
+ *       });
+ *
+ *       // Wait for approval to be confirmed before proceeding
+ *       await walletClient.waitForTransactionReceipt({
+ *           hash: approveTxHash,
+ *           confirmations: 1,
+ *       });
+ *   }
+ *
+ * ============================================================
+ * STEP 3: SIGN AND SUBMIT THE TRANSACTION
+ * ============================================================
+ *
+ * Use the transaction details from the quote response to build
+ * and submit the origin chain transaction.
+ *
+ * Transaction fields from response:
+ *   - transaction.details.to    : Contract address to call
+ *   - transaction.details.data  : Encoded calldata
+ *   - transaction.details.value : Native token value to send (in wei)
+ *   - transaction.details.gas   : Estimated gas limit (optional)
+ *
+ * Chain-specific differences:
+ *   ┌─────────────┬──────────────────────────────────────────────────────┐
+ *   │ EVM         │ Use to/data/value fields with walletClient           │
+ *   │ Solana      │ Deserialize base64 VersionedTransaction, sign,       │
+ *   │             │ and send via connection.sendTransaction               │
+ *   │ Tron        │ Build via wallet/triggersmartcontract, sign with      │
+ *   │             │ TronWeb, broadcast with sendRawTransaction            │
+ *   │ HyperCore   │ Destination only — tokens use 16-byte token IDs      │
+ *   │             │ instead of standard EVM addresses                     │
+ *   └─────────────┴──────────────────────────────────────────────────────┘
+ *
+ * EVM Example:
+ *
+ *   const txHash = await walletClient.sendTransaction({
+ *       to:    quote.quotes[0].transaction.details.to,
+ *       data:  quote.quotes[0].transaction.details.data,
+ *       value: BigInt(quote.quotes[0].transaction.details.value),
+ *       gas:   quote.quotes[0].transaction.details.gas
+ *                  ? BigInt(quote.quotes[0].transaction.details.gas)
+ *                  : undefined,
+ *   });
+ *
+ *   // Wait for at least 2 confirmations before polling status
+ *   const receipt = await walletClient.waitForTransactionReceipt({
+ *       hash: txHash,
+ *       confirmations: 2,
+ *   });
+ *
+ * ============================================================
+ * STEP 4: MONITOR CROSS-CHAIN STATUS
+ * ============================================================
+ *
+ * Endpoint : GET https://api.0x.org/cross-chain/status
+ *
+ * Poll this endpoint after submitting the origin transaction
+ * to track the bridge fill on the destination chain.
+ * Bridging can take seconds to minutes depending on the provider.
+ *
+ * Required Parameters:
+ *   - originChain   : Chain ID of the origin chain
+ *   - originTxHash  : Transaction hash from Step 3
+ *
+ * Recommended Parameters:
+ *   - quoteId       : The quoteId from Step 1 (enables faster resolution)
+ *
+ * Possible Status Values:
+ *   - pending       : Bridge has not yet picked up the order
+ *   - in_progress   : Bridge is processing the transfer
+ *   - completed     : Tokens delivered on destination chain
+ *   - failed        : Transfer failed (recovery may be available)
+ *
+ * Example:
+ *
+ *   const statusParams = new URLSearchParams({
+ *       originChain:  '8453',
+ *       originTxHash: txHash,
+ *       quoteId:      quote.quotes[0].quoteId,
+ *   });
+ *
+ *   // Poll until status is "completed" or "failed"
+ *   const statusResponse = await fetch(
+ *       'https://api.0x.org/cross-chain/status?' + statusParams.toString(),
+ *       { headers }
+ *   );
+ *
+ *   const status = await statusResponse.json();
+ *   console.log(status);
+ *
+ * ============================================================
+ * END OF CROSS-CHAIN API EXAMPLE
+ * ============================================================
+ */
+```
+
+[^1]: https://docs.0x.org/cross-chain/cross-chain-api/introduction
+[^2]: https://docs.0x.org/docs/introduction/supported-chains
+[^3]: https://docs.0x.org/api-reference/api-overview

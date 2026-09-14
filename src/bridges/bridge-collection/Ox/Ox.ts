@@ -27,8 +27,8 @@ class Ox implements Bridge {
     };
   }
 
-  quotes(params: QuoteParams): BridgeQuote {
-    req: BridgeRequest = {
+  quote(params: QuoteParams): BridgeQuote {
+    const req: BridgeRequest = {
       urlParameters: this.baseUrl,
       parameters: this.baseUrl,
       method: "GET",
