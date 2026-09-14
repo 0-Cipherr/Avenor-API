@@ -9,7 +9,7 @@ interface Bridge {
   bridgeName: string;
   chainsAvailable: Array<number>; //array of 4 digit numbers chain id
   bridge(): BridgeReciept;
-  quote(params: QuoteParams): BridgeQuote;
+  quote(params: QuoteParams): Promise<BridgeQuote>;
   getAllAssets(): AllAssets;
 }
 

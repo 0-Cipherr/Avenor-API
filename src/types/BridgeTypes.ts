@@ -9,7 +9,13 @@ type QuoteParams = {
   sortQuotesBy: string;
 };
 
-type BridgeQuote = {};
+type BridgeQuote = {
+  quote: unknown;
+  quoteId: string;
+  transaction: unknown;
+  allowance: unknown;
+  buyAmount: string;
+};
 
 type BridgeReciept = {
   transactionHash: string;

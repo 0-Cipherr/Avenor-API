@@ -10,11 +10,13 @@ import type {
 } from "../../../types/BridgeTypes.ts";
 
 class Ox implements Bridge {
-  constructor() {}
-
   chainsAvailable: Array<number> = []; //chain ids go here
   bridgeName: string = "Ox";
   baseUrl: ApiURL = "https://api.0x.org/cross-chain/";
+  API_KEY: string;
+  constructor(_API_Key: string) {
+    this.API_KEY = _API_Key;
+  }
 
   bridge(): BridgeReciept {
     return {
@@ -27,15 +29,22 @@ class Ox implements Bridge {
     };
   }
 
-  quote(params: QuoteParams): BridgeQuote {
-    const req: BridgeRequest = {
+  //params must be in the structure in quote params for all bridges
+  async quote(params: QuoteParams): Promise<BridgeQuote> {
+    const reqParams: BridgeRequest = {
       urlParameters: this.baseUrl,
       parameters: this.baseUrl,
       method: "GET",
-      data: "", //supposed to be an obj
+      data: params, //supposed to be an obj
     };
+
+    const response = await fetch(
+      this.baseUrl + "/quotes?" + reqParams.toString(),
+    );
+
+    const { data } = await req.data;
     // AxiosResponse bridgeResponse =await  callBridge(bridgeRequest);
-    return {};
+    return {} as Promise<BridgeQuote>;
   }
 
   getAllAssets(): AllAssets {
