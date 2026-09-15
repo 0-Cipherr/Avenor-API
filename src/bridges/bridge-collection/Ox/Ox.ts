@@ -9,7 +9,7 @@ import type {
   QuoteParams,
 } from "../../../types/BridgeTypes.ts";
 
-export default class Ox implements Bridge {
+export class Ox implements Bridge {
   chainsAvailable: Array<number> = []; //chain ids go here
   bridgeName: string = "Ox";
   baseUrl: ApiURL = "https://api.0x.org/cross-chain/";
