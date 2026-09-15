@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS Bridges{
+id PRIMARY Key,
+encodedClass TEXT NOT NULL,
+created_at TIMESTAMP
+};
