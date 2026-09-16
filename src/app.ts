@@ -15,3 +15,4 @@ app.listen(3000);
 //set up classses for bridge follwinf interface standard
 
 // every thing mus have a type thats why we using ts
+//micro services 

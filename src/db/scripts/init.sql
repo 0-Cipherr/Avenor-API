@@ -1,5 +1,7 @@
 CREATE TABLE IF NOT EXISTS Bridges{
 id PRIMARY Key,
-encodedClass TEXT NOT NULL,
-created_at TIMESTAMP
+  API_KEY TEXT NOT NULL,
+  bridgeName VARCHAR(100) NOT NULL,
+  chainsAvailable INTEGER[] NOT NULL,
+  baseUrl TEXT NOT NULL
 };

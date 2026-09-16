@@ -34,6 +34,13 @@ type BridgeRequest = {
   data: unknown; //supposed to be an obj
 };
 
+type BridgePost = {
+  API_KEY: string;
+  bridgeName: string;
+  chainsAvailable: number[];
+  baseUrl: string;
+};
+
 type AllAssets = {};
 
 //|logical or
