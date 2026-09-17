@@ -7,7 +7,11 @@ import type {
 } from "../types/BridgeTypes.js";
 
 interface BridgeQueryRules {
-  postBridge(bridgeCode: any, bridge: BridgePost): Promise<boolean>; //only team members can access this
+  postBridge(
+    bridgeCode: any,
+    bridge: BridgePost,
+    bridgeConstructor: any,
+  ): Promise<boolean>; //only team members can access this
   getBridgeWhere(where: any[]): any;
   getAllBridges(): any;
   dbConnect(): Promise<boolean>;

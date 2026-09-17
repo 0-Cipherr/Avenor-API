@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS Bridges{
-id PRIMARY Key,
+  id PRIMARY Key,
   API_KEY TEXT NOT NULL,
   bridgeName VARCHAR(100) NOT NULL,
   chainsAvailable INTEGER[] NOT NULL,
