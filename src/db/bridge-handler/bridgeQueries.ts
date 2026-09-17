@@ -27,7 +27,11 @@ export default class BridgeQueries implements BridgeQueryRules {
 
   //private hide
 
-  async postBridge(bridgeCode: any, bridge: BridgePost): Promise<boolean> {
+  async postBridge(
+    bridgeCode: any,
+    bridge: BridgePost,
+    bridgeConstructor: any,
+  ): Promise<boolean> {
     try {
       const result = await this.dbPool.query(
         "INSERT INTO Bridges VALUES($1,$2,$3,$4);",
@@ -57,8 +61,13 @@ export default class BridgeQueries implements BridgeQueryRules {
     return response.rows;
   }
 
-  async getAllBridges(): Promise<QueryResult<any>> {
-    const response: any = await this.dbPool.query("SELECT * FROM BRIDGES;");
-    return response.rows;
+  async getAllBridges(): Promise<QueryResult<any> | null> {
+    try {
+      const response: any = await this.dbPool.query("SELECT * FROM BRIDGES;");
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 }
