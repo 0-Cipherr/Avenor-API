@@ -1,4 +1,29 @@
-import axios, { type AxiosResponse } from "axios";
+import fs from "fs";
+import path from "path";
+async function createBridge(bridgeCode: string, constructorParams: any) {
+  try {
+    const pathName = path.join(
+      process.cwd(),
+      "src",
+      "bridges",
+      "bridge-collection",
+      "DeBridge",
+    );
+    console.log(pathName);
+    await fs.mkdir(pathName, (err) => {});
+    fs.writeFileSync(
+      path.resolve(path.join(pathName, constructorParams.bridgeName)),
+      bridgeCode,
+      "utf8",
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+createBridge(
+  `
+    import axios, { type AxiosResponse } from "axios";
 import type { Bridge } from "../../../interfaces/bridge-interfaces.js";
 import type {
   AllAssets,
@@ -9,7 +34,7 @@ import type {
   QuoteParams,
 } from "../../../types/BridgeTypes.ts";
 
-export class Ox implements Bridge {
+export class Debridge implements Bridge {
   chainsAvailable: Array<number> = []; //chain ids go here
   bridgeName: string = "Ox";
   baseUrl: ApiURL = "https://api.0x.org/cross-chain/";
@@ -72,3 +97,7 @@ export class Ox implements Bridge {
 ///store the class instances as strings in a db retrieve in backend decode as class and store all info
 
 //in a array of classes
+
+    `,
+  { bridgeName: "debridge.ts" },
+);

@@ -25,7 +25,7 @@ export default class BridgeQueries implements BridgeQueryRules {
     return true;
   }
 
-  async postBridge(bridge: BridgePost): Promise<boolean> {
+  async postBridge(bridgeCode: any, bridge: BridgePost): Promise<boolean> {
     try {
       const result = await this.dbPool.query(
         "INSERT INTO Bridges VALUES($1,$2,$3,$4);",
