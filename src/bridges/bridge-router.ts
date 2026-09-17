@@ -20,7 +20,7 @@ bridgeRouter.get("/all/name", async (req, res) => {
     await bridgeQueries.getAllBridges();
   const status: number = allBridges !== null ? 200 : 500;
   const filteredNames = filterByName(allBridges);
-  res.status(status).send(filterByName);
+  res.status(status).send({ bridges: filterByName });
 });
 
 _chainsAvailable: (Array<number>,
@@ -32,17 +32,40 @@ _chainsAvailable: (Array<number>,
 bridgeRouter.get("/chain/", async (req, res) => {
   //get chains by me
   const { chainSearch } = req.body;
+  const allBridges: Promise<QueryResult<any>> =
+    await bridgeQueries.getAllBridges();
+  const chains = getChainsAvailable(allBridges);
+  const status: number = allBridges !== null ? 200 : 500;
+  res.status(status).send(chains);
 });
 
-bridgeRouter.post("/quote/:bridgeName/:bridgeParams", async (req, res) => {
+bridgeRouter.post("/quote/:bridgeSearchParams/:bridgeParams", async (req, res) => {
   //get bridge quote
-  const { bridgeId, bridgeParams } = req.body;
+  const { bridgeSearchParams, bridgeParams } = req.body;
+  const doesExist = await verifyBridgeExists(bridgeSearchParams)
+if(doesExist){
+    const quote: Promise<BridgeQuote> = await 
+}
 });
 
 //execute bridge
 bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
   const { bridgeId, quoteParams } = req.body;
 });
+
+
+function verifyBridgeExists(bridgeSearchParams:any ){
+
+}
+
+function getChainsAvailable(bridges: any): number[] {
+  const chains: number[] = [];
+
+  for (const bridge in bridges) {
+    chains.push(...bridges[bridge].chainsAvailable);
+  }
+  return chains;
+}
 
 function filterByName(bridges: any) {
   const names: string[] = [];

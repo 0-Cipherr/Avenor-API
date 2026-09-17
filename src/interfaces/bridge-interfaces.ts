@@ -25,6 +25,8 @@ interface Bridge {
   chainsAvailable: Array<number>; //array of 4 digit numbers chain id
   baseUrl: string;
   API_KEY: string;
+  volume: string;
+  initInstance(instance: any);
   bridge(): BridgeReciept;
   quote(params: QuoteParams): Promise<BridgeQuote>;
   getAllAssets(): AllAssets;

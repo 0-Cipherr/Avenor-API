@@ -52,6 +52,8 @@ export default class BridgeQueries implements BridgeQueryRules {
     }
   }
 
+  async bridgesByChains() {}
+
   async getBridgeWhere(where: any[]): Promise<QueryResult<any>> {
     const response: any = await this.dbPool.query(
       "SELECT * FROM Bridges where $1",

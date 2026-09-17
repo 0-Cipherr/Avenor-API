@@ -11,16 +11,14 @@ export class SkeletonBridge implements Bridge {
   bridgeName: string = "";
   chainsAvailable: number[] = [];
   baseUrl: string = "";
-  SkeletonBridge(
-    _API_KEY: string,
-    _bridgeName: string,
-    _chainsAvailable: number[],
-    _baseUrl: string,
-  ) {
-    this.API_KEY = _API_KEY;
-    this.bridgeName = _bridgeName;
-    this.chainsAvailable = _chainsAvailable;
-    this.baseUrl = _baseUrl;
+  volume: string = "";
+
+  initInstance(instance: any) {
+    this.chainsAvailable = instance.chainsAvailable;
+    this.bridgeName = instance.bridgeName;
+    this.baseUrl = instance.baseUrl;
+    this.API_KEY = instance.API_KEY;
+    this.volume = instance.volume;
   }
 
   async quote(params: QuoteParams): Promise<BridgeQuote> {
