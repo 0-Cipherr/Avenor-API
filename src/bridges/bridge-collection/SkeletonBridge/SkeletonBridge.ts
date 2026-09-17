@@ -6,7 +6,7 @@ import type {
   QuoteParams,
 } from "../../../types/BridgeTypes.js";
 
-export class SKeletonBridge implements Bridge {
+export class SkeletonBridge implements Bridge {
   API_KEY: string = "";
   bridgeName: string = "";
   chainsAvailable: number[] = [];

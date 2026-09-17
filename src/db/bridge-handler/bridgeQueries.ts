@@ -25,6 +25,8 @@ export default class BridgeQueries implements BridgeQueryRules {
     return true;
   }
 
+  //private hide
+
   async postBridge(bridgeCode: any, bridge: BridgePost): Promise<boolean> {
     try {
       const result = await this.dbPool.query(
