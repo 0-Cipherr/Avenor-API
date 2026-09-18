@@ -1,7 +1,11 @@
 import express from "express";
 import type { QueryResult } from "pg";
 import BridgeQueries from "../db/bridge-handler/bridgeQueries.js";
-import type { BridgeQueryRules } from "../interfaces/bridge-interfaces.js";
+import { findBridge } from "../fileExplorerActions/file-creator.js";
+import type {
+  Bridge,
+  BridgeQueryRules,
+} from "../interfaces/bridge-interfaces.js";
 
 const bridgeRouter = express.Router();
 const bridgeQueries: BridgeQueryRules = new BridgeQueries();
@@ -39,23 +43,34 @@ bridgeRouter.get("/chain/", async (req, res) => {
   res.status(status).send(chains);
 });
 
-bridgeRouter.post("/quote/:bridgeSearchParams/:bridgeParams", async (req, res) => {
-  //get bridge quote
-  const { bridgeSearchParams, bridgeParams } = req.body;
-  const doesExist = await verifyBridgeExists(bridgeSearchParams)
-if(doesExist){
-    const quote: Promise<BridgeQuote> = await 
-}
-});
+bridgeRouter.post(
+  "/quote/:bridgeSearchParams/:bridgeParams",
+  async (req, res) => {
+    //get bridge quote
+    const { bridgeSearchParams, bridgeParams } = req.body;
+    const doesExist = await verifyBridgeExists(bridgeSearchParams);
+    if (doesExist == true) {
+      const bridgeFound: Promise<Bridge> = await findBridge(bridgeSearchParams);
+    }
+  },
+);
 
 //execute bridge
 bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
   const { bridgeId, quoteParams } = req.body;
 });
 
-
-function verifyBridgeExists(bridgeSearchParams:any ){
-
+function verifyBridgeExists(bridgeSearchParams: any): any {
+  try {
+    const query = bridgeQueries.queries.getAllBridges;
+    const result = bridgeQueries.getBridgeByCondition(
+      query,
+      ["WHERE name"],
+      [bridgeSearchParams.bridgeName],
+    );
+  } catch (error) {
+    return null;
+  }
 }
 
 function getChainsAvailable(bridges: any): number[] {
