@@ -2,16 +2,24 @@ import fs from "fs";
 import path from "path";
 import type { Bridge } from "../interfaces/bridge-interfaces.js";
 
-async function findBridgeByName(bridgeName: string) {
-  const pathName = path.join(
-    "src",
-    "bridges",
-    "bridge-collection",
-    bridgeName + ".ts",
-  );
-  const code = fs.readFileSync(pathName);
-  const loadedClass: Bridge = await require(pathName);
-  console.log(code);
+export async function findBridgeByName(
+  bridgeName: string,
+): Promise<Bridge | any> {
+  try {
+    const pathName = path.join(
+      "src",
+      "bridges",
+      "bridge-collection",
+      bridgeName + ".ts",
+    );
+    const code = fs.readFileSync(pathName);
+    const loadedClass: Bridge = await require(pathName);
+    console.log(code);
+
+    return loadedClass;
+  } catch (error) {
+    return null;
+  }
 }
 async function createBridge(bridgeCode: string, constructorParams: any) {
   try {

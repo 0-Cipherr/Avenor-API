@@ -1,7 +1,7 @@
 import express from "express";
 import type { QueryResult } from "pg";
 import BridgeQueries from "../db/bridge-handler/bridgeQueries.js";
-import { findBridge } from "../fileExplorerActions/file-creator.js";
+import { findBridgeByName } from "../fileExplorerActions/file-creator.js";
 import type {
   Bridge,
   BridgeQueryRules,
@@ -27,12 +27,12 @@ bridgeRouter.get("/all/name", async (req, res) => {
   res.status(status).send({ bridges: filterByName });
 });
 
-_chainsAvailable: (Array<number>,
-  bridgeRouter.get("/chains/:chainSearch", async (req, res) => {
-    //get rbidge by the chains i am using
-    const { chainSearch } = req.body;
-  }));
+bridgeRouter.get("/chains/:chainSearch", async (req, res) => {
+  //get rbidge by the chains i am using
+  const { chainSearch } = req.body;
+});
 
+//gets all chainsAvaialable from all bridges colectivley
 bridgeRouter.get("/chain/", async (req, res) => {
   //get chains by me
   const { chainSearch } = req.body;
@@ -43,6 +43,7 @@ bridgeRouter.get("/chain/", async (req, res) => {
   res.status(status).send(chains);
 });
 
+//eturns the quote based on the bridgeall bridges quotes follow the same standard
 bridgeRouter.post(
   "/quote/:bridgeSearchParams/:bridgeParams",
   async (req, res) => {
@@ -50,8 +51,14 @@ bridgeRouter.post(
     const { bridgeSearchParams, bridgeParams } = req.body;
     const doesExist = await verifyBridgeExists(bridgeSearchParams);
     if (doesExist == true) {
-      const bridgeFound: Promise<Bridge> = await findBridge(bridgeSearchParams);
+      const bridgeFound: Bridge = await findBridgeByName(bridgeSearchParams);
+      const quote =
+        bridgeFound !== null && (await bridgeFound.quote(bridgeParams));
+      res.status(200).send({ quote: quote });
     }
+    res
+      .status(500)
+      .send({ error: "Could not find bridge " + bridgeSearchParams });
   },
 );
 
@@ -60,14 +67,15 @@ bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
   const { bridgeId, quoteParams } = req.body;
 });
 
-function verifyBridgeExists(bridgeSearchParams: any): any {
+async function verifyBridgeExists(bridgeSearchParams: any): Promise<any> {
   try {
     const query = bridgeQueries.queries.getAllBridges;
-    const result = bridgeQueries.getBridgeByCondition(
+    const result = await bridgeQueries.getBridgeByCondition(
       query,
       ["WHERE name"],
       [bridgeSearchParams.bridgeName],
     );
+    result ? true : false;
   } catch (error) {
     return null;
   }
