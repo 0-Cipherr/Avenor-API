@@ -52,6 +52,7 @@ export type {
   BridgeReciept,
   BridgeRequest,
   QuoteParams,
+  BridgePost
 };
 
 //heres how we do it make classes for each bridge they implement a main bridge class that all bridges follow this standard all classes sotred in an array and referenced byt their sritng name ex:

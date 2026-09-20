@@ -79,6 +79,8 @@ async function seedBridges(bridges: any[]): Promise<any[]> {
   }
 }
 
+
+
 async function start() {
   const bridges = await getAllBridges();
 

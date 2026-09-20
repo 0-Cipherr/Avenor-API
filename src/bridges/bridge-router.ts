@@ -73,7 +73,7 @@ bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
       bridgeName: bridgeFound.bridgeName,
     });
     if (doesExist == true) {
-      const bridgeFound: Bridge = await findBridgeByName({
+      const foundBirdge: Bridge = await findBridgeByName({
         bridgeName: bridgeFound.bridgeName,
       });
       const quote =
@@ -82,7 +82,7 @@ bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
     }
   }
 });
-
+// /all thats left to fix to do rest and finish this project i am so proud of myself
 async function verifyBridgeExists(bridgeSearchParams: any): Promise<any> {
   try {
     const query = bridgeQueries.queries.getAllBridges;

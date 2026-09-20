@@ -20,7 +20,7 @@ interface BridgeQueryRules {
     whereCollection: any[],
     params: any[],
   ): Promise<any>;
-  getBridgeName(id: number): Promise<string | null>;
+  getBridgeName(id: number): Promise<any[] | null>;
   getAllBridges(): any;
   dbConnect(): Promise<boolean>;
   dbDisconnect(): Promise<boolean>;
