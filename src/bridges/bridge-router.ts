@@ -27,9 +27,11 @@ bridgeRouter.get("/all/name", async (req, res) => {
   res.status(status).send({ bridges: filterByName });
 });
 
-bridgeRouter.get("/chains/:chainSearch", async (req, res) => {
+bridgeRouter.get("/chains/:chains", async (req, res) => {
   //get rbidge by the chains i am using
-  const { chainSearch } = req.body;
+  const { chains } = req.body;
+  const allBridges = await bridgeQueries.getAllBridges();
+  res.send(allBridges.length > 0 ? 200 : 500).send({ result: allBridges });
 });
 
 //gets all chainsAvaialable from all bridges colectivley
@@ -65,6 +67,20 @@ bridgeRouter.post(
 //execute bridge
 bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
   const { bridgeId, quoteParams } = req.body;
+  const bridgeFound = await bridgeQueries.getBridgeName(bridgeId);
+  if (bridgeFound !== null) {
+    const doesExist = await verifyBridgeExists({
+      bridgeName: bridgeFound.bridgeName,
+    });
+    if (doesExist == true) {
+      const bridgeFound: Bridge = await findBridgeByName({
+        bridgeName: bridgeFound.bridgeName,
+      });
+      const quote =
+        bridgeFound !== null && (await bridgeFound.quote(quoteParams));
+      res.status(200).send({ quote: quote });
+    }
+  }
 });
 
 async function verifyBridgeExists(bridgeSearchParams: any): Promise<any> {
@@ -75,7 +91,7 @@ async function verifyBridgeExists(bridgeSearchParams: any): Promise<any> {
       ["WHERE name"],
       [bridgeSearchParams.bridgeName],
     );
-    result ? true : false;
+    return result ? true : false;
   } catch (error) {
     return null;
   }

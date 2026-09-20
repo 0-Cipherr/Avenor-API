@@ -61,7 +61,6 @@ export default class BridgeQueries implements BridgeQueryRules {
   async getBridgeByCondition(
     condition: any,
     whereCollection: any[],
-    numParams: number,
     params: any[],
   ): Promise<any> {
     const constructedQuery = this.constructQuery(
@@ -86,6 +85,43 @@ export default class BridgeQueries implements BridgeQueryRules {
     }
 
     return parameters;
+  }
+
+  async getAllChainsAvailable(chains: number[]): Promise<any> {
+    try {
+      const bridgesAvailable: any = [];
+      const bridges: any = await this.getAllBridges();
+      for (const bridge in bridges) {
+        const queriedChains: any = bridges[bridge].chainsAvailable;
+
+        for (const queriedChain in queriedChains) {
+          for (const chain in chains) {
+            if (chains[chain] == queriedChains[queriedChain]) {
+              bridgesAvailable.push(bridges[bridge]);
+              break;
+            }
+          }
+        }
+      }
+
+      return bridgesAvailable;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  async getBridgeName(id: number): Promise<any[] | null> {
+    try {
+      const res = await this.dbPool.query(
+        "SELECT * FROM bridges WHERE id = $1",
+        [id],
+      );
+      return res.rows;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 
   async getAllBridges(): Promise<QueryResult<any> | null> {
