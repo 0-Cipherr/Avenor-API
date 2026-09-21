@@ -6,4 +6,11 @@ CREATE TABLE IF NOT EXISTS Bridges{
   baseUrl TEXT NOT NULL
 };
 
+
+CREATE TABLE if NOT EXISTS{
+ id PRIMARY key,
+ 
+}
+
+
 INSERT INTO Bridges (API_KEY , bridgeName,chainsAvailable, baseUrl) VALUES ('Test', [], 'https://wtf.com');
