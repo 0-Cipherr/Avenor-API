@@ -23,7 +23,6 @@ services:
 
 #pretty cool docker has marketplace looking thing for images
 
-services:
 
   # ============================================================
   # SERVICE NAME
