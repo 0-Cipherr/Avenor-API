@@ -5,3 +5,5 @@ CREATE TABLE IF NOT EXISTS Bridges{
   chainsAvailable INTEGER[] NOT NULL,
   baseUrl TEXT NOT NULL
 };
+
+INSERT INTO Bridges (API_KEY , bridgeName,chainsAvailable, baseUrl) VALUES ('Test', [], 'https://wtf.com');

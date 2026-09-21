@@ -13,17 +13,25 @@ export class Ox implements Bridge {
   chainsAvailable: Array<number> = []; //chain ids go here
   bridgeName: string = "Ox";
   baseUrl: ApiURL = "https://api.0x.org/cross-chain/";
-  API_KEY: string;
+  API_KEY: string = "";
+  volume: string ="";
   constructor(
-    _API_Key: string,
-    _bridgeName: string,
-    _chainsAvailable: Array<number>,
-    baseUrl: string,
+
   ) {
-    this.API_KEY = _API_Key;
+ 
   }
 
-  bridge(): BridgeReciept {
+
+
+  initInstance(instance:any ) {
+    this.chainsAvailable = instance.chainsAvailable;
+    this.bridgeName = instance.bridgeName;
+    this.baseUrl = instance.baseUrl;
+    this.API_KEY = instance.API_KEY;
+    this.volume = instance.volume;
+  }
+
+  bridge() :BridgeReciept {
     return {
       transactionHash: "",
       amountPaid: 0,

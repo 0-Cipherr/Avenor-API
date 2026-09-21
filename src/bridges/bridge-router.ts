@@ -1,7 +1,11 @@
 import express from "express";
 import type { QueryResult } from "pg";
 import BridgeQueries from "../db/bridge-handler/bridgeQueries.js";
-import type { BridgeQueryRules } from "../interfaces/bridge-interfaces.js";
+import { findBridgeByName } from "../fileExplorerActions/file-creator.js";
+import type {
+  Bridge,
+  BridgeQueryRules,
+} from "../interfaces/bridge-interfaces.js";
 
 const bridgeRouter = express.Router();
 const bridgeQueries: BridgeQueryRules = new BridgeQueries();
@@ -20,29 +24,87 @@ bridgeRouter.get("/all/name", async (req, res) => {
     await bridgeQueries.getAllBridges();
   const status: number = allBridges !== null ? 200 : 500;
   const filteredNames = filterByName(allBridges);
-  res.status(status).send(filterByName);
+  res.status(status).send({ bridges: filteredNames });
 });
 
-_chainsAvailable: (Array<number>,
-  bridgeRouter.get("/chains/:chainSearch", async (req, res) => {
-    //get rbidge by the chains i am using
-    const { chainSearch } = req.body;
-  }));
+bridgeRouter.get("/chains/:chains", async (req, res) => {
+  //get rbidge by the chains i am using
+  const { chains } = req.body;
+  const allBridges = await bridgeQueries.getAllBridges();
+  res.send(allBridges.length > 0 ? 200 : 500).send({ result: allBridges });
+});
 
+//gets all chainsAvaialable from all bridges colectivley
 bridgeRouter.get("/chain/", async (req, res) => {
   //get chains by me
   const { chainSearch } = req.body;
+  const allBridges: Promise<QueryResult<any>> =
+    await bridgeQueries.getAllBridges();
+  const chains = getChainsAvailable(allBridges);
+  const status: number = allBridges !== null ? 200 : 500;
+  res.status(status).send(chains);
 });
 
-bridgeRouter.post("/quote/:bridgeName/:bridgeParams", async (req, res) => {
-  //get bridge quote
-  const { bridgeId, bridgeParams } = req.body;
-});
+//eturns the quote based on the bridgeall bridges quotes follow the same standard
+bridgeRouter.post(
+  "/quote/:bridgeSearchParams/:bridgeParams",
+  async (req, res) => {
+    //get bridge quote
+    const { bridgeSearchParams, bridgeParams } = req.body;
+    const doesExist = await verifyBridgeExists(bridgeSearchParams);
+    if (doesExist == true) {
+      const bridgeFound: Bridge = await findBridgeByName(bridgeSearchParams);
+      const quote =
+        bridgeFound !== null && (await bridgeFound.quote(bridgeParams));
+      res.status(200).send({ quote: quote });
+    }
+    res
+      .status(500)
+      .send({ error: "Could not find bridge " + bridgeSearchParams });
+  },
+);
 
 //execute bridge
 bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
   const { bridgeId, quoteParams } = req.body;
+  const bridgeNameFound: any = await bridgeQueries.getBridgeName(bridgeId);
+  if (bridgeNameFound !== null) {
+    const doesExist = await verifyBridgeExists({
+      bridgeName: bridgeNameFound.bridgeName,
+    });
+    if (doesExist == true) {
+      const foundBirdge: Bridge = await findBridgeByName(
+        bridgeNameFound.bridgeName,
+      );
+      const quote =
+        bridgeNameFound !== null && (await foundBirdge.quote(quoteParams));
+      res.status(200).send({ quote: quote });
+    }
+  }
 });
+// /all thats left to fix to do rest and finish this project i am so proud of myself
+async function verifyBridgeExists(bridgeSearchParams: any): Promise<any> {
+  try {
+    const query = bridgeQueries.queries.getAllBridges;
+    const result = await bridgeQueries.getBridgeByCondition(
+      query,
+      ["WHERE name"],
+      [bridgeSearchParams.bridgeName],
+    );
+    return result ? true : false;
+  } catch (error) {
+    return null;
+  }
+}
+
+function getChainsAvailable(bridges: any): number[] {
+  const chains: number[] = [];
+
+  for (const bridge in bridges) {
+    chains.push(...bridges[bridge].chainsAvailable);
+  }
+  return chains;
+}
 
 function filterByName(bridges: any) {
   const names: string[] = [];
