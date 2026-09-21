@@ -23,287 +23,270 @@ services:
 
 #pretty cool docker has marketplace looking thing for images
 
+# ============================================================
+# SERVICE NAME
+# ============================================================
 
-  # ============================================================
-  # SERVICE NAME
-  # ============================================================
+# You choose this name.
+# Docker Compose uses it to identify the service.
+#
+# Examples:
+#   api:
+#   db:
+#   redis:
+#   frontend:
+#
+# Other services can generally reach this service using its name.
+#
+# api:
 
-  # You choose this name.
-  # Docker Compose uses it to identify the service.
-  #
-  # Examples:
-  #   api:
-  #   db:
-  #   redis:
-  #   frontend:
-  #
-  # Other services can generally reach this service using its name.
-  #
-  api:
+# ==========================================================
+# IMAGE
+# ==========================================================
 
+# Run an existing Docker image.
+#
+# Usually comes from Docker Hub or another container registry.
+#
+# Examples:
+#
+# image: postgres:17
+# image: redis:7
+# image: nginx:latest
+# image: node:22
+#
+# image: postgres:17
 
-    # ==========================================================
-    # IMAGE
-    # ==========================================================
+# ==========================================================
+# BUILD
+# ==========================================================
 
-    # Run an existing Docker image.
-    #
-    # Usually comes from Docker Hub or another container registry.
-    #
-    # Examples:
-    #
-    # image: postgres:17
-    # image: redis:7
-    # image: nginx:latest
-    # image: node:22
-    #
-    image: postgres:17
+# Build your own Docker image instead of using an existing one.
+#
+# "." means:
+# "Use the current directory as the build context."
+#
+# Usually this directory contains a Dockerfile.
+#
+# Example:
+#
+# build: .
+#
+# You can also be more specific:
+#
+# build:
+#   context: .
+#   dockerfile: Dockerfile
+#
+# build: .
 
+# ==========================================================
+# ENVIRONMENT
+# ==========================================================
 
-    # ==========================================================
-    # BUILD
-    # ==========================================================
+# Set environment variables inside the container.
+#
+# Useful for:
+# - usernames
+# - passwords
+# - database names
+# - API configuration
+# - application settings
+#
+# Example:
+# #
+# environment:
+#   POSTGRES_USER: testuser
+#   POSTGRES_PASSWORD: testpass
+#   POSTGRES_DB: testdb
 
-    # Build your own Docker image instead of using an existing one.
-    #
-    # "." means:
-    # "Use the current directory as the build context."
-    #
-    # Usually this directory contains a Dockerfile.
-    #
-    # Example:
-    #
-    # build: .
-    #
-    # You can also be more specific:
-    #
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #
-    build: .
+# ==========================================================
+# ENV_FILE
+# ==========================================================
 
+# Load environment variables from a file.
+#
+# Example:
+#
+# env_file:
+#   - .env
+#
+# Instead of putting all variables directly in compose.yaml.
+#
+# env_file:
+#   - .env
 
-    # ==========================================================
-    # ENVIRONMENT
-    # ==========================================================
+# ==========================================================
+# PORTS
+# ==========================================================
 
-    # Set environment variables inside the container.
-    #
-    # Useful for:
-    # - usernames
-    # - passwords
-    # - database names
-    # - API configuration
-    # - application settings
-    #
-    # Example:
-    #
-    environment:
-      POSTGRES_USER: testuser
-      POSTGRES_PASSWORD: testpass
-      POSTGRES_DB: testdb
+# Connect a port on your computer to a port inside
+# the container.
+#
+# FORMAT:
+#
+#   "HOST_PORT:CONTAINER_PORT"
+#
+# Example:
+#
+# Your computer's port 3000
+#        ↓
+# Container's port 3000
+#
+# ports:
+#   - "3000:3000"
 
+# ==========================================================
+# VOLUMES
+# ==========================================================
 
-    # ==========================================================
-    # ENV_FILE
-    # ==========================================================
+# Mount files/directories into the container.
+#
+# FORMAT:
+#
+#   HOST_PATH:CONTAINER_PATH
+#
+# Example:
+#
+# Take ./db/seed.sql on your computer
+# and put it at /seed.sql inside the container.
+#
+# volumes:
+#   - ./db/seed.sql:/seed.sql
 
-    # Load environment variables from a file.
-    #
-    # Example:
-    #
-    # env_file:
-    #   - .env
-    #
-    # Instead of putting all variables directly in compose.yaml.
-    #
-    env_file:
-      - .env
+# ==========================================================
+# DEPENDS_ON
+# ==========================================================
 
+# Tell Compose that this service depends on another service.
+#
+# Example:
+#
+# API depends on the database.
+#
+# depends_on:
+#   - db
 
-    # ==========================================================
-    # PORTS
-    # ==========================================================
+# ==========================================================
+# COMMAND
+# ==========================================================
 
-    # Connect a port on your computer to a port inside
-    # the container.
-    #
-    # FORMAT:
-    #
-    #   "HOST_PORT:CONTAINER_PORT"
-    #
-    # Example:
-    #
-    # Your computer's port 3000
-    #        ↓
-    # Container's port 3000
-    #
-    ports:
-      - "3000:3000"
+# Override the normal command that the Docker image runs.
+#
+# Example:
+#
+# command: npm run dev
+#
+# Another example:
+#
+# command: python app.py
 
+# ==========================================================
+# ENTRYPOINT
+# ==========================================================
 
-    # ==========================================================
-    # VOLUMES
-    # ==========================================================
+# Override the container's default entrypoint.
+#
+# This is more fundamental than "command".
+#
+# Example:
+#
+# entrypoint: ["/app/start.sh"]
 
-    # Mount files/directories into the container.
-    #
-    # FORMAT:
-    #
-    #   HOST_PATH:CONTAINER_PATH
-    #
-    # Example:
-    #
-    # Take ./db/seed.sql on your computer
-    # and put it at /seed.sql inside the container.
-    #
-    volumes:
-      - ./db/seed.sql:/seed.sql
+# ==========================================================
+# NETWORKS
+# ==========================================================
 
+# Choose which Docker networks this service belongs to.
+#
+# Services on the same Docker network can communicate
+# with each other.
+#
+# Example:
+#
+# networks:
+#   - app-network
 
-    # ==========================================================
-    # DEPENDS_ON
-    # ==========================================================
+# ==========================================================
+# EXPOSE
+# ==========================================================
 
-    # Tell Compose that this service depends on another service.
-    #
-    # Example:
-    #
-    # API depends on the database.
-    #
-    depends_on:
-      - db
+# Documents/makes a container port available to other
+# containers on the network.
+#
+# Unlike "ports", this does NOT publish the port
+# to your computer.
+#
+# Example:
+#
+# expose:
+#   - "5432"
 
+# ==========================================================
+# HEALTHCHECK
+# ==========================================================
 
-    # ==========================================================
-    # COMMAND
-    # ==========================================================
+# Tell Docker how to check whether the service is healthy.
+#
+# Useful for databases and APIs where "container started"
+# does not necessarily mean "application is ready".
+#
+# Example:
+# #
+# healthcheck:
+#   test: ["CMD", "pg_isready"]
+#   interval: 10s
+#   timeout: 5s
+#   retries: 5
 
-    # Override the normal command that the Docker image runs.
-    #
-    # Example:
-    #
-    command: npm run dev
-    #
-    # Another example:
-    #
-    # command: python app.py
+# ==========================================================
+# RESTART
+# ==========================================================
 
+# Tell Docker what to do if the container stops.
+#
+# Common values:
+#
+# restart: "no"
+# restart: always
+# restart: on-failure
+# restart: unless-stopped
+#
+# restart: unless-stopped
 
-    # ==========================================================
-    # ENTRYPOINT
-    # ==========================================================
+# ==========================================================
+# CONTAINER_NAME
+# ==========================================================
 
-    # Override the container's default entrypoint.
-    #
-    # This is more fundamental than "command".
-    #
-    # Example:
-    #
-    # entrypoint: ["/app/start.sh"]
+# Explicitly choose the container's name.
+#
+# Usually you DON'T need this.
+# Compose can generate a name automatically.
+#
+# Example:
+#
+# container_name: my-api
 
+# ==========================================================
+# USER
+# ==========================================================
 
-    # ==========================================================
-    # NETWORKS
-    # ==========================================================
+# Choose which Linux user the application runs as
+# inside the container.
+#
+# Example:
+#
+# user: "1000:1000"
 
-    # Choose which Docker networks this service belongs to.
-    #
-    # Services on the same Docker network can communicate
-    # with each other.
-    #
-    # Example:
-    #
-    networks:
-      - app-network
+# ==========================================================
+# PRIVILEGED
+# ==========================================================
 
-
-    # ==========================================================
-    # EXPOSE
-    # ==========================================================
-
-    # Documents/makes a container port available to other
-    # containers on the network.
-    #
-    # Unlike "ports", this does NOT publish the port
-    # to your computer.
-    #
-    # Example:
-    #
-    expose:
-      - "5432"
-
-
-    # ==========================================================
-    # HEALTHCHECK
-    # ==========================================================
-
-    # Tell Docker how to check whether the service is healthy.
-    #
-    # Useful for databases and APIs where "container started"
-    # does not necessarily mean "application is ready".
-    #
-    # Example:
-    #
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-
-    # ==========================================================
-    # RESTART
-    # ==========================================================
-
-    # Tell Docker what to do if the container stops.
-    #
-    # Common values:
-    #
-    # restart: "no"
-    # restart: always
-    # restart: on-failure
-    # restart: unless-stopped
-    #
-    restart: unless-stopped
-
-
-    # ==========================================================
-    # CONTAINER_NAME
-    # ==========================================================
-
-    # Explicitly choose the container's name.
-    #
-    # Usually you DON'T need this.
-    # Compose can generate a name automatically.
-    #
-    # Example:
-    #
-    # container_name: my-api
-
-
-    # ==========================================================
-    # USER
-    # ==========================================================
-
-    # Choose which Linux user the application runs as
-    # inside the container.
-    #
-    # Example:
-    #
-    # user: "1000:1000"
-
-
-    # ==========================================================
-    # PRIVILEGED
-    # ==========================================================
-
-    # Give the container elevated privileges.
-    #
-    # Usually DON'T use this unless you specifically
-    # know you need it.
-    #
-    # Example:
-    #
-    # privileged: true
+# Give the container elevated privileges.
+#
+# Usually DON'T use this unless you specifically
+# know you need it.
+#
+# Example:
+#
+# privileged: true
