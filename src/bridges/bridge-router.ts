@@ -24,7 +24,7 @@ bridgeRouter.get("/all/name", async (req, res) => {
     await bridgeQueries.getAllBridges();
   const status: number = allBridges !== null ? 200 : 500;
   const filteredNames = filterByName(allBridges);
-  res.status(status).send({ bridges: filterByName });
+  res.status(status).send({ bridges: filteredNames });
 });
 
 bridgeRouter.get("/chains/:chains", async (req, res) => {
@@ -67,17 +67,17 @@ bridgeRouter.post(
 //execute bridge
 bridgeRouter.post("/bridge/:bridgeId/:quoteParams", async (req, res) => {
   const { bridgeId, quoteParams } = req.body;
-  const bridgeFound = await bridgeQueries.getBridgeName(bridgeId);
-  if (bridgeFound !== null) {
+  const bridgeNameFound: any = await bridgeQueries.getBridgeName(bridgeId);
+  if (bridgeNameFound !== null) {
     const doesExist = await verifyBridgeExists({
-      bridgeName: bridgeFound.bridgeName,
+      bridgeName: bridgeNameFound.bridgeName,
     });
     if (doesExist == true) {
-      const foundBirdge: Bridge = await findBridgeByName({
-        bridgeName: bridgeFound.bridgeName,
-      });
+      const foundBirdge: Bridge = await findBridgeByName(
+        bridgeNameFound.bridgeName,
+      );
       const quote =
-        bridgeFound !== null && (await bridgeFound.quote(quoteParams));
+        bridgeNameFound !== null && (await foundBirdge.quote(quoteParams));
       res.status(200).send({ quote: quote });
     }
   }
