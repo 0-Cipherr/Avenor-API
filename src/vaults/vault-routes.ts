@@ -9,7 +9,6 @@ const bridgeQueries: BridgeQueryRules = new BridgeQueries();
 vaultRouter.get("all", (req, res) => {});
 
 //first thing to run before we test and use api
-<<<<<<< HEAD
 vaultRouter.post("/vault/:vaultInfo", (req: any, res: any) => {
   try {
     const { vaultInfo: any } = req;
@@ -20,8 +19,9 @@ vaultRouter.post("/vault/:vaultInfo", (req: any, res: any) => {
 
     res.status(500).send({ message: "unexpected error" });
   }
-=======
-vaultRouter.post("/vault/:vaultInfo", (req, res) => {
-  console.log("Running  ");
->>>>>>> 28e5ad1d2478268bc3c1c68479ae748832f9c07b
 });
+
+vaultRouter.post("/all", async (req, res) => {}); //get all vaults
+vaultRouter.post("/:vaultId", async (req, res) => {}); //get by id
+vaultRouter.post("/deposit/:vaultId/:depositParams", async (req, res) => {}); //get by id
+vaultRouter.post("/withdraw/:vaultId/:withdrawParams", async (req, res) => {}); //get by id
